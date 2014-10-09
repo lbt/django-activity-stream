@@ -2,6 +2,7 @@ from django.apps import apps
 from django.utils.translation import gettext_lazy as _
 from django.utils.timezone import now
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 
 from actstream import settings
 from actstream.signals import action
@@ -35,7 +36,8 @@ def follow(user, obj, send_action=True, actor_only=True, flag='', **kwargs):
     instance, created = apps.get_model('actstream', 'follow').objects.get_or_create(
         user=user, object_id=obj.pk, flag=flag,
         content_type=ContentType.objects.get_for_model(obj),
-        actor_only=actor_only
+        actor_only=actor_only,
+        site=Site.object.get_current()
     )
     if send_action and created:
         if not flag:
@@ -62,7 +64,8 @@ def unfollow(user, obj, send_action=False, flag=''):
     check(obj)
     qs = apps.get_model('actstream', 'follow').objects.filter(
         user=user, object_id=obj.pk,
-        content_type=ContentType.objects.get_for_model(obj)
+        content_type=ContentType.objects.get_for_model(obj),
+        site=Site.object.get_current()
     )
 
     if flag:
@@ -93,7 +96,8 @@ def is_following(user, obj, flag=''):
 
     qs = apps.get_model('actstream', 'follow').objects.filter(
         user=user, object_id=obj.pk,
-        content_type=ContentType.objects.get_for_model(obj)
+        content_type=ContentType.objects.get_for_model(obj),
+        site=Site.objects.get_current()
     )
 
     if flag:
@@ -120,7 +124,8 @@ def action_handler(verb, **kwargs):
         verb=str(verb),
         public=bool(kwargs.pop('public', True)),
         description=kwargs.pop('description', None),
-        timestamp=kwargs.pop('timestamp', now())
+        timestamp=kwargs.pop('timestamp', now()),
+        site=Site.objects.get_current(),
     )
 
     for opt in ('target', 'action_object'):
