@@ -8,6 +8,7 @@ from django.utils.timesince import timesince as djtimesince
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from django.utils.timezone import now
+from django.contrib.sites.models import Site
 
 from actstream import settings as actstream_settings
 from actstream.managers import FollowManager
@@ -33,6 +34,8 @@ class Follow(models.Model):
     )
     flag = models.CharField(max_length=255, blank=True, db_index=True, default='')
     started = models.DateTimeField(default=now, db_index=True)
+    site = models.ForeignKey(Site)
+
     objects = FollowManager()
 
     class Meta:
@@ -110,6 +113,8 @@ class Action(models.Model):
     timestamp = models.DateTimeField(default=now, db_index=True)
 
     public = models.BooleanField(default=True, db_index=True)
+
+    site = models.ForeignKey(Site)
 
     objects = actstream_settings.get_action_manager()
 
