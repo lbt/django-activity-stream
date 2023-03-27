@@ -1,6 +1,6 @@
 import datetime
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.six import text_type
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
