@@ -1,5 +1,5 @@
 from django.core.exceptions import ImproperlyConfigured
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from actstream import settings
 from actstream.signals import action
@@ -15,7 +15,7 @@ def fixed_last_executed_query(self, cursor, sql, params):
     """
     Patches error with MySQL + Django<=1.5: https://code.djangoproject.com/ticket/19954
     """
-    return force_text(cursor._last_executed, errors='replace')
+    return force_str(cursor._last_executed, errors='replace')
 
 
 class ActstreamConfig(AppConfig):
